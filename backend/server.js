@@ -20,7 +20,32 @@ app.get('/cep/:cep', async (req, res) => {
         
         res.status(200).json(dados);
     } catch (err) {
-        res.status(500).json({ erro: 'Erro de comunicaçãp com viaceo' });
+        res.status(500).json({ erro: 'Erro de comunicação com viacep' });
+    } 
+});
+
+app.get('/cep/xml/:cep', async (req, res) => {
+    const {cep} = req.params;
+
+    try {
+        const resposta = await axios.get(`https://viacep.com.br/ws/${cep}/xml/`);
+         
+        res.set('Content-Type', 'application/xml');
+        res.status(200).send(resposta.data);
+    } catch (err) {
+        res.status(500).json('<erro>Erro de comunicação com viacep (XML)</erro>');    
+    }
+});
+
+app.get('/endereco/:uf/:cidade/:logradouro', async (req, res) => {
+    const { uf, cidade, logradouro } = req.params;
+    
+    try {
+        const resposta = await axios.get(`https://viacep.com.br/ws/${uf}/${cidade}/${logradouro}/json/`);
+        
+        res.status(200).json(resposta.data);
+    } catch (err) {
+        res.status(500).json({ erro: 'Erro de comunicação com viacep (Busca por texto)' });
     } 
 });
 
